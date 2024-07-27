@@ -2,6 +2,7 @@ import React from 'react'
 import { render, screen } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import App from './App'
+import txt from '../i18n/index.json'
 
 describe('Module 4 Project Tests', () => {
   describe('English Language', () => {
@@ -10,20 +11,74 @@ describe('Module 4 Project Tests', () => {
 
       One test is done for you as an example.
     */
-    test(`TEXT_HEADING_CREATE_ACCOUNT is visible`, () => {
-      render(<App lang="en" />)
-      expect(screen.getByText("Create an Account")).toBeVisible()
+     
+
+   let texts = getEntriesByKeyPrefix(txt.en, 'TEXT')
+   for (let [key, val] of texts) {
+    test(`${key} is visible`, () => {
+      render(<App />)
+      expect(screen.getByText(val)).toBeVisible()
     })
+   }
+
+   let labels = getEntriesByKeyPrefix(txt.en, 'LABEL')
+   for (let [key, val] of labels) {
+    test(`${key} is visible`, () => {
+      render(<App />)
+      expect(screen.getByText(val)).toBeVisible()
+    })
+   }
+  
+    test(`PLACEHOLDER_USERNAME is visible`, () => {
+    render(<App lang="en" />)
+    expect(screen.getByPlaceholderText(txt.en.PLACEHOLDER_USERNAME)).toBeVisible()
   })
+ })
+
   describe('Spanish Language', () => {
     /*
       👉 TASK 3
 
       This is done after making the UI multilingual.
     */
+      test(`TEXT_HEADING_CREATE_ACCOUNT is visible`, () => {
+        render(<App lang="esp" />)
+        expect(screen.getByText(txt.esp.TEXT_HEADING_CREATE_ACCOUNT)).toBeVisible()
+      })
+      test(`LABEL_USERNAME is visible`, () => {
+      render(<App lang="esp" />)
+      expect(screen.getByLabelText(txt.esp.LABEL_USERNAME)).toBeVisible()
+    })
+      test(`PLACEHOLDER_USERNAME is visible`, () => {
+      render(<App lang="esp" />)
+      expect(screen.getByPlaceholderText(txt.esp.PLACEHOLDER_USERNAME)).toBeVisible()
+    })
+
+
+
   })
   describe('getEntriesByKeyPrefix', () => {
     test('can extract the correct data', () => {
+      const obj ={
+        abc_1: "data_abc_1",
+      abc_2: "data_abc_2",
+      xyz_1: "data_xyz_1",
+      abc_3: "data_abc_3",
+      }
+      const expected = [
+      ["abc_1", "data_abc_1"],
+      ["abc_2", "data_abc_2"],
+      ["abc_3", "data_abc_3"],
+      ]
+      const expected2 = [
+        ["xyz_1", "data_xyz_1"],
+      ]
+      expect(getEntriesByKeyPrefix(obj, "abc")).toEqual(expected)
+      expect(getEntriesByKeyPrefix(obj, "xyz")).toEqual(expected2)
+      expect(getEntriesByKeyPrefix(obj, "foo")).toEqual([])
+    })
+  })
+})
     /*
       👉 TASK 4 part 2
 
@@ -35,10 +90,9 @@ describe('Module 4 Project Tests', () => {
       the tests are written _before_ implementing
       the function being tested.
     */
-    })
-  })
-})
+  
 function getEntriesByKeyPrefix(obj, keyPrefix) {
+  return Object.entries(obj).filter(([key, vall]) => key.split('_')[0]=== keyPrefix )
   /*
     👉 TASK 4 part 1
 
